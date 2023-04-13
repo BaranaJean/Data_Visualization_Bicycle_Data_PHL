@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<TITLE>PHL Bus Ridership</TITLE>
+<link rel="shortcut icon" href="">
+<STYLE>
+</STYLE>
+<SCRIPT type="text/javascript" src="https://d3js.org/d3.v7.min.js"></SCRIPT>
+</HEAD>
+<BODY>
+<H1>Weekly Passangers</H1>
+<svg id="chart" width="600" height="600" style="border: 1px dotted black"></svg>
+<SCRIPT type="text/javascript">
+const body = d3.select("body");
+const barChart = body.select("#chart");
+const MARGIN = 50;
+const CHART_W = parseInt(barChart.attr("width"));
+const CHART_H = parseInt(barChart.attr("height"));
+const BAR_WIDTH = 10;
+
+d3.csv("week-pass.csv", (row) => {
+    row.years = parseInt(row.years);
+    row.weekly = parseInt(row.weekly);
+    return row;
+}).then(function(data) {
+    console.log(data);
+    let xScale = d3.scaleLinear()
+                   .domain([2005, 2016])
+                   .range([0, CHART_W - MARGIN]);
+
+    let yScale = d3.scaleLinear()
+                   .domain([900000, 1000000])
+                   .range([CHART_H - MARGIN, 0]);
+
+    let heightScale = d3.scaleLinear()
+                        .domain([900000, 1000000])
+                        .range([0, CHART_H - MARGIN]);
+
+    const xAxis = d3.axisBottom()
+                    .ticks(15)
+                    .tickFormat(x => parseInt(x))
+                    .scale(xScale);
+
+    const yAxis = d3.axisLeft()
+                    .ticks(15)
+                    .tickFormat((d, i) => 900 + (i * 5) + "k")
+                    .scale(yScale);
+
+    barChart.append("g")
+             .attr("transform", `translate(${MARGIN - 20}, ${CHART_W - MARGIN + 10})`)
+             .call(xAxis);
+
+    barChart.append("g")
+             .attr("transform", `translate(${MARGIN - 20}, 10)`)
+             .call(yAxis);
+
+    let bars = barChart.selectAll("rect")
+                       .data(data)
+                       .enter()
+                       .append("rect")
+                       .on("mouseover", function(d) {
+                            d3.select(this).attr("width", 40).style("fill", "teal");
+                        })
+                       .on("mouseout", function(d) {
+                            d3.select(this).attr("width", BAR_WIDTH).style("fill", "black");
+                        })
+                       .transition()
+                       .duration(1000)
+                       .delay(1000)
+                       .ease(d3.easeElasticOut)
+                       .attr("x", (d) => xScale(d.years))
+                       .attr("y", (d) => yScale(d.weekly))
+                       .attr("width", BAR_WIDTH)
+                       .attr("height", (d) => heightScale(d.weekly))
+                       .attr("transform", "translate(30, 10)");
+
+});
+</SCRIPT>
+</BODY>
+</HTML>

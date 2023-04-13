@@ -1,0 +1,51 @@
+city,state_abbr,percentage_rider,population
+NYC,NY,56.6,8550405
+Jersey City,NJ,47.6,3971883
+D.C,D.C,37.4,2720546
+Boston,MA,33.7,2296224
+San Francisco,CA,33.1,1567442
+Cambridge,MA,28.6,1563025
+Chicago,IL,27.6,1469845
+Newark,NJ,26.7,1394928
+Arlington,NA,26.4,1300092
+Yonkers,NY,26.4,1026908
+Philadelphia,PA,26.2,931830
+Alesandria,VA,21.7,868031
+Berkeley,CA,21.6,864816
+Oakland,CA,20.3,853173
+Seattle,WA,20.1,850106
+Daly City,CA,19.8,833319
+Baltimore,MD,18.6,827097
+Pittsburgh,PA,17,684451
+Hardford,CT,16.6,682545
+Stamford,CT,14.1,681124
+Richmond,CA,14,677116
+Edison,NJ,13.4,672228
+New Haven,CT,13.3,667137
+Minneapolis,MN,13.1,655770
+Portland,OR,12.1,654610
+Paterson,NJ,11.9,632309
+Bellevue,WA,11.8,631346
+Buffalo,NY,11.7,623747
+Miami,FL,11.4,621849
+Elizabeth,NJ,11.3,615366
+,,,600155
+,,,559121
+,,,531641
+,,,520052
+,,,490712
+,,,475378
+,,,474140
+,,,471825
+,,,463878
+,,,456568
+,,,452745
+,,,451066
+,,,443885
+,,,441003
+,,,419267
+,,,410939
+,,,403505
+,,,389965
+,,,389617
+,,,388125

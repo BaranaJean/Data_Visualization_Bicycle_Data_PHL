@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<TITLE>Bike Commuters</TITLE>
+
+<STYLE>
+svg {
+    border: 1px dotted gray;
+    width: 1000px;
+    height: 800px;
+}
+
+</STYLE>
+
+<!-- src: if exists, code is in the referred file -->
+<SCRIPT type="text/javascript" src="https://d3js.org/d3.v7.min.js">
+</SCRIPT>
+
+</HEAD>
+
+<BODY>
+<H1>Top Cities of Bike Commuters</H1>
+
+<SVG id="pie"></SVG>
+
+<SCRIPT type="text/javascript">
+
+const body = d3.select("body");
+const chart = body.select("#pie");
+
+const CHART_W = parseInt(chart.style("width"));
+const CHART_H = parseInt(chart.style("height"));
+
+const CHART_CX = CHART_W / 2;
+const CHART_CY = CHART_H / 2;
+let rOut = CHART_W / 4;
+let rIn = rOut / 3;
+
+let data = {};
+
+d3.csv("us_bike_commute.csv", (row) => {
+    row.percentage_worker_pop = parseFloat(row.percentage_worker_pop)
+    if((row.city in data) == false) {
+        data[row.city] = (row.percentage_worker_pop * 193.96) / 100;
+    }
+    return row;
+}).then((dataset) => {
+    const sums = Object.values(data);
+
+    const pieData = d3.pie()(sums);
+
+    const genArc = d3.arc().padRadius(0.5).innerRadius(rIn).outerRadius(rOut);
+
+    const pieColor = d3.scaleSequential(d3.interpolateCool);
+
+    const pieChart = chart.selectAll("g")
+                               .data(pieData)
+                               .enter()
+                               .append("g")
+                               .attr("transform", `translate(${CHART_CX}, ${CHART_CY})`);
+
+    pieChart.append("path")
+            .classed("piePiece", true)
+            .style("fill", (d, i) => pieColor(i))
+            .attr("d", genArc)
+            .style("stroke", "black")
+            .style("stroke-width", 2);
+
+    pieChart.append("text")
+            .text((d) => d.percentage_worker_pop)
+            .attr("transform", function(d) { return "translate(" + genArc.centroid(d) + ")";  })
+            .style("text-anchor", "middle")
+            .style("font-size", 17);
+});
+
+</SCRIPT>
+
+</BODY>
+
+</HTML>

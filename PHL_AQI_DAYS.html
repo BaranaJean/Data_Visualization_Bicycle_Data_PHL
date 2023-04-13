@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<TITLE>Philadelphia AQI</TITLE>
+<STYLE>
+</STYLE>
+<SCRIPT type="text/javascript" src="https://d3js.org/d3.v7.min.js"></SCRIPT>
+</HEAD>
+<BODY>
+<H1>Philadelphia AQI</H1>
+<SVG id="daysChart" width="600" height="600" style="border: 1px dotted black"></SVG>
+<SCRIPT type="text/javascript">
+const body = d3.select("body");
+const area = body.select("#daysChart");
+const MARGIN = 50;
+const CHART_W = parseInt(area.attr("width"));
+const CHART_H = parseInt(area.attr("height"));
+
+let areaChart = d3.csv("aqi_good_days.csv", (row) => {
+    row.year = parseInt(row.year);
+    row.phl_good = parseInt(row.phl_good);
+    row.port_good = parseInt(row.port_good);
+    row.nyc_good = parseInt(row.nyc_good);
+    return row;
+}).then(function(data) {
+    let xScale = d3.scaleLinear()
+                   .domain([1981, 2021])
+                   .range([MARGIN, CHART_W - MARGIN]);
+
+    let yScale = d3.scaleLinear()
+                   .domain([0, 365])
+                   .range([CHART_H - MARGIN, MARGIN]);
+
+    const xAxis = d3.axisBottom()
+                     .ticks(21)
+                     .scale(xScale)
+                     .tickFormat(x => parseInt(x));
+
+    const yAxis = d3.axisLeft()
+                    .ticks(22)
+                    .scale(yScale);
+
+    area.append("g")
+             .attr("transform", `translate(-20, ${CHART_W - MARGIN})`)
+             .call(xAxis);
+
+    area.append("g")
+             .attr("transform", `translate(${MARGIN - 20}, 0)`)
+             .call(yAxis);
+
+    const areaAQI1 = d3.area()
+                       .x((d) => xScale(d.year))
+                       .y0((d) => yScale(d.phl_good))
+                       .y1((d) => yScale(d.port_good));
+
+    area.append("path")
+             .datum(data)
+             .style("fill", "green")
+             .style("stroke", "none")
+             .style("opacity", 0.5)
+             .on("mouseover", function(d) {
+                d3.select(this).style("opacity", 1);
+             })
+             .on("mouseout", function(d) {
+                d3.select(this).style("opacity", 0.5);
+             })
+             .attr("d", areaAQI1);
+
+    const areaAQI2 = d3.area()
+                       .x((d) => xScale(d.year))
+                       .y0((d) => yScale(0))
+                       .y1((d) => yScale(d.phl_good));
+
+    area.append("path")
+             .datum(data)
+             .style("fill", "yellow")
+             .style("stroke", "red")
+             .style("opacity", 0.5)
+             .on("mouseover", function(d) {
+                d3.select(this)
+                  .style("fill", "black")
+                  .style("opacity", 1);
+             })
+             .on("mouseout", function(d) {
+                d3.select(this)
+                  .style("fill", "yellow")
+                  .style("opacity", 0.5);
+             })
+             .attr("d", areaAQI2);
+
+    const areaAQI3 = d3.area()
+                       .x((d) => xScale(d.year))
+                       .y0((d) => yScale(0))
+                       .y1((d) => yScale(d.nyc_good));
+
+    area.append("path")
+             .datum(data)
+             .style("fill", "red")
+             .style("stroke", "none")
+             .style("opacity", 0.5)
+             .on("mouseover", function(d) {
+                d3.select(this)
+                  .style("opacity", 1);
+             })
+             .on("mouseout", function(d) {
+                d3.select(this)
+                  .style("opacity", 0.5);
+             })
+             .attr("d", areaAQI3);
+
+      area.append("rect").attr("x",110).attr("y",20).attr("width", 10).attr("height", 10).style("fill", "green");
+      area.append("text").attr("x",130).attr("y",29).attr("width", 10).attr("height", 10).text("Portland");
+
+      area.append("rect").attr("x",110).attr("y",40).attr("width", 10).attr("height", 10).style("fill", "yellow");
+      area.append("text").attr("x",125).attr("y",50).attr("width", 10).attr("height", 10).text("Philadelphia");
+
+      area.append("rect").attr("x",110).attr("y",60).attr("width", 10).attr("height", 10).style("fill", "red");
+      area.append("text").attr("x",120).attr("y",70).attr("width", 10).attr("height", 10).text("NYC");
+
+   
+
+});
+</SCRIPT>
+</BODY>
+</HTML>
